@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "The Gate",
+    "slug": "theGate",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTabletMode": true,
+      "bundleIdentifier": "com.theGate.app"
+    },
+    "android": {
+      "package": "com.theGate.app"
+    },
+    "experiments": {
+      "tsTurboModule": false
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "local-notification-sound.wav"
+          ]
+        }
+      ]
+    ]
+  }
+}
