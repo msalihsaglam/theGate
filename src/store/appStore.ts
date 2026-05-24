@@ -10,7 +10,7 @@ const DEFAULT_TAGS: QuickTag[] = [
   {
     id: uuid.v4() as string,
     label: 'Google Search',
-    defaultDuration: 120,
+    defaultDuration: 5, // 5 seconds for testing
     isInfinite: false,
     color: '#00d9ff',
     createdAt: new Date(),
@@ -50,6 +50,7 @@ interface AppStore extends AppState {
   startSession: (tagId: string, customIntent?: string) => GateSession;
   endSession: (sessionId: string) => void;
   skipGate: () => void;
+  continueSession: (additionalTime?: number) => void;
   
   // Tag actions
   addTag: (tag: Omit<QuickTag, 'id' | 'createdAt' | 'usageCount'>) => void;
@@ -63,6 +64,15 @@ interface AppStore extends AppState {
   
   // Preferences
   setPreferences: (prefs: Partial<any>) => void;
+  
+  // UI State
+  sessionCompletionModal: {
+    isVisible: boolean;
+    tagLabel: string;
+    duration: number;
+  };
+  showSessionCompletionModal: (tagLabel: string, duration: number) => void;
+  hideSessionCompletionModal: () => void;
   
   // Utility
   reset: () => void;
@@ -86,6 +96,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
   preferences: DEFAULT_PREFERENCES,
   isLoading: false,
   error: null,
+  sessionCompletionModal: {
+    isVisible: false,
+    tagLabel: '',
+    duration: 0,
+  },
   
   // Session actions
   startSession: (tagId: string, customIntent?: string) => {
@@ -120,14 +135,33 @@ export const useAppStore = create<AppStore>((set, get) => ({
   },
   
   skipGate: () => {
+    const { currentSession, sessions } = get();
+    if (currentSession) {
+      const endedSession = {
+        ...currentSession,
+        endTime: new Date(),
+        duration: (new Date().getTime() - currentSession.startTime.getTime()) / 1000,
+        isSkipped: true,
+      };
+      
+      set({
+        currentSession: null,
+        sessions: [...sessions, endedSession],
+      });
+    }
+  },
+
+  continueSession: (additionalTime?: number) => {
     const { currentSession } = get();
     if (currentSession) {
+      // Reset start time to give fresh time
       set({
         currentSession: {
           ...currentSession,
-          isSkipped: true,
+          startTime: new Date(),
         },
       });
+      console.log('Session continued - timer reset');
     }
   },
   
@@ -175,6 +209,27 @@ export const useAppStore = create<AppStore>((set, get) => ({
       preferences: { ...state.preferences, ...prefs },
     }));
   },
+
+  // UI State
+  showSessionCompletionModal: (tagLabel: string, duration: number) => {
+    set({
+      sessionCompletionModal: {
+        isVisible: true,
+        tagLabel,
+        duration,
+      },
+    });
+  },
+
+  hideSessionCompletionModal: () => {
+    set({
+      sessionCompletionModal: {
+        isVisible: false,
+        tagLabel: '',
+        duration: 0,
+      },
+    });
+  },
   
   // Utility
   reset: () => {
@@ -187,6 +242,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
       preferences: DEFAULT_PREFERENCES,
       isLoading: false,
       error: null,
+      sessionCompletionModal: {
+        isVisible: false,
+        tagLabel: '',
+        duration: 0,
+      },
     });
   },
 }));

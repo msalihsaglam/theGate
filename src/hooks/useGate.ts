@@ -99,12 +99,28 @@ export function useAnalytics(days: number = 7) {
   
   const totalOpens = recentSessions.length;
   const skippedOpens = recentSessions.filter((s) => s.isSkipped).length;
-  const intentionalOpens = totalOpens - skippedOpens;
-  const intentionRate = totalOpens > 0 ? (intentionalOpens / totalOpens) * 100 : 0;
+  const completedOpens = totalOpens - skippedOpens;
+  const mindfulnessScore = totalOpens > 0 ? (completedOpens / totalOpens) * 100 : 100;
+  const skipRate = totalOpens > 0 ? (skippedOpens / totalOpens) * 100 : 0;
+  
+  console.log('📊 Analytics Debug:', {
+    totalOpens,
+    completedOpens,
+    skippedOpens,
+    mindfulnessScore: mindfulnessScore.toFixed(0) + '%',
+    recentSessions: recentSessions.map((s) => ({
+      tagId: s.tagId,
+      isSkipped: s.isSkipped,
+      duration: s.duration,
+    })),
+  });
   
   return {
     totalOpens,
-    intentionRate,
+    completedOpens,
+    skippedOpens,
+    mindfulnessScore,
+    skipRate,
     tagAnalytics,
     recentSessions,
   };

@@ -42,6 +42,7 @@ function GateStackNavigator() {
 function AppNavigator() {
   return (
     <Tab.Navigator
+      initialRouteName="Gate"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: theme.colors.neon.blue,

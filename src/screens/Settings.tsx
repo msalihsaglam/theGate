@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Pressable, SafeAreaView } from 'react-native';
 import { useAppStore } from '@store/appStore';
 import { theme } from '@themes/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,7 +24,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -102,7 +102,7 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

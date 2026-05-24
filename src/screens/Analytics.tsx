@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { useAnalytics } from '@hooks/useGate';
 import { theme } from '@themes/theme';
 
@@ -12,7 +12,7 @@ export default function AnalyticsScreen() {
   const analytics = useAnalytics(7);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -26,12 +26,12 @@ export default function AnalyticsScreen() {
         {/* Summary Stats */}
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Gate Opens</Text>
+            <Text style={styles.statLabel}>Gate Attempts</Text>
             <Text style={styles.statValue}>{analytics.totalOpens}</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Intention Rate</Text>
-            <Text style={styles.statValue}>{analytics.intentionRate.toFixed(0)}%</Text>
+            <Text style={styles.statLabel}>Mindfulness Score</Text>
+            <Text style={styles.statValue}>{analytics.mindfulnessScore.toFixed(0)}%</Text>
           </View>
         </View>
 
@@ -64,14 +64,21 @@ export default function AnalyticsScreen() {
 
         {/* Mindful Message */}
         <View style={styles.messageSection}>
-          <Text style={styles.messageTitle}>Mindful Reflection</Text>
+          <Text style={styles.messageTitle}>Your Mindfulness Score</Text>
           <Text style={styles.messageText}>
-            You opened the gate {analytics.totalOpens} times this week with {analytics.intentionRate.toFixed(0)}% intentional opens.
-            Keep practicing mindfulness! 🧘
+            📊 Total Gate Attempts: {analytics.totalOpens}
+            {'\n\n'}
+            🧘 Mindfulness Score: {analytics.mindfulnessScore.toFixed(0)}%
+            {'\n'}
+            You completed your intention {analytics.completedOpens} out of {analytics.totalOpens} times.
+            {'\n\n'}
+            ⚡ Skipped (Dopamine-driven): {analytics.skippedOpens} times
+            {'\n\n'}
+            {analytics.mindfulnessScore >= 80 ? '✨ Excellent mindfulness! You\'re highly intentional!' : analytics.mindfulnessScore >= 50 ? '💪 Good progress! Keep practicing!' : '🚀 Keep building the habit!'}
           </Text>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -173,11 +180,11 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.base,
     fontWeight: '600',
     color: theme.colors.neon.purple,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.lg,
   },
   messageText: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.secondary,
-    lineHeight: theme.typography.lineHeight.relaxed,
+    lineHeight: 24,
   },
 });
